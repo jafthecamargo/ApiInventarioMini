@@ -34,5 +34,7 @@ public class Producto implements Serializable {
     @Column(name = "precio", nullable = false)
     private Double precio;
 
+    @ManyToOne
+    @JoinColumn(name = "idCategoria")
     private Categoria categoria;
 }

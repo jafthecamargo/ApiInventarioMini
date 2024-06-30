@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//localhost:8080/apiProducto/productosCategoria
-
 @CrossOrigin(origins = {"*"})
 @RestController
 @RequestMapping("/apiProducto")
 public class ProductoController {
+
     @Autowired
     ProductoService service;
 
@@ -28,10 +27,31 @@ public class ProductoController {
         return service.findAll();
     }
 
+    @GetMapping("/productos/{id}")
+    public Producto obtenerProductoPorId(@PathVariable Long id) {
+        return service.findById(id);
+    }
+
     @PostMapping("/productos")
     @ResponseStatus(HttpStatus.CREATED)
     public Producto save(@RequestBody Producto producto) {
         return service.save(producto);
+    }
+
+    @PutMapping("/productos/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Producto update(@PathVariable Long id, @RequestBody Producto nuevoProducto) {
+        Producto productoExistente = service.findById(id);
+        if (productoExistente != null) {
+            productoExistente.setNombreProducto(nuevoProducto.getNombreProducto());
+            productoExistente.setDescripcionProducto(nuevoProducto.getDescripcionProducto());
+            productoExistente.setExistencias(nuevoProducto.getExistencias());
+            productoExistente.setPrecio(nuevoProducto.getPrecio());
+            productoExistente.setCategoria(nuevoProducto.getCategoria());
+            return service.save(productoExistente);
+        } else {
+            throw new RuntimeException("No se encontró el producto con el ID: " + id);
+        }
     }
 
     @DeleteMapping("/productos/{id}")
